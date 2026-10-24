@@ -7,14 +7,14 @@ CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 BACKUP_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 
 if [[ "$(id -u)" -eq 0 ]]; then
-    echo "Запустите скрипт от обычного пользователя, а не от root." >&2
+    echo "Run this script as a regular user, not as root." >&2
     exit 1
 fi
 
 if [[ "${1:-}" != "--yes" ]]; then
-    echo "Файлы в $CONFIG_DIR и $HOME будут заменены симлинками на $REPO_DIR."
-    echo "Текущие файлы сохранятся в $BACKUP_DIR"
-    read -r -p "Продолжить? [y/N] " answer
+    echo "Files in $CONFIG_DIR and $HOME will be replaced with symlinks to $REPO_DIR."
+    echo "Existing files will be backed up to $BACKUP_DIR"
+    read -r -p "Continue? [y/N] " answer
     [[ "$answer" == [yY] ]] || exit 1
 fi
 
@@ -46,4 +46,4 @@ for source in "$REPO_DIR"/home/.[!.]* "$REPO_DIR"/home/*; do
 done
 
 echo
-echo "Готово. Резервная копия: $BACKUP_DIR"
+echo "Done. Backup: $BACKUP_DIR"

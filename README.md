@@ -1,36 +1,36 @@
 # Dotfiles
 
-Мои конфиги для **Hyprland (Wayland)** на CachyOS/Arch: Waybar с кастомным мини-плеером, терминалы, shell, темы GTK/Qt и мелкие утилиты.
+My personal **Hyprland (Wayland)** setup on CachyOS/Arch: Waybar with a custom mini player, terminals, shell, GTK/Qt themes and small utilities.
 
-## Что внутри
+## Contents
 
 ```
 dotfiles/
 ├── config/
-│   ├── alacritty/        # Alacritty + тема
-│   ├── btop/             # монитор ресурсов + тема
-│   ├── cava/             # аудиовизуализатор: шейдеры и темы
-│   ├── fastfetch/        # вывод system info
-│   ├── fish/             # fish, fisher, приветствие
-│   ├── fontconfig/       # сглаживание шрифтов
-│   ├── foot/             # Wayland-терминал
+│   ├── alacritty/        # Alacritty + theme
+│   ├── btop/             # resource monitor + theme
+│   ├── cava/             # audio visualizer: shaders and themes
+│   ├── fastfetch/        # system info output
+│   ├── fish/             # fish, fisher, greeting
+│   ├── fontconfig/       # font rendering
+│   ├── foot/             # Wayland terminal
 │   ├── fuzzel/           # launcher
-│   ├── gtk-3.0/          # GTK3: настройки и тема
-│   ├── gtk-4.0/          # GTK4: настройки и тема
-│   ├── hypr/             # Hyprland (Lua-конфиг)
+│   ├── gtk-3.0/          # GTK3: settings and theme
+│   ├── gtk-4.0/          # GTK4: settings and theme
+│   ├── hypr/             # Hyprland (Lua config)
 │   ├── kitty/            # kitty + kittens (search, scroll_mark)
-│   ├── Kvantum/          # темы Qt (Colloid, MaterialAdw)
-│   ├── matugen/          # генерация цветов по обоям
-│   ├── micro/            # редактор: настройки, темы, синтаксисы
-│   ├── mpv/              # настройки видео
-│   ├── noctalia/         # тема
-│   ├── qt5ct/            # Qt5: цвета
-│   ├── qt6ct/            # Qt6: настройки и цвета
-│   ├── swash/            # обои
-│   ├── wlogout/          # меню выхода
-│   ├── waybar/           # панель, стили и мини-плеер
-│   ├── zshrc.d/          # дополнения для zsh
-│   ├── mimeapps.list     # приложения по умолчанию
+│   ├── Kvantum/          # Qt themes (Colloid, MaterialAdw)
+│   ├── matugen/          # wallpaper-based color generation
+│   ├── micro/            # editor: settings, themes, syntaxes
+│   ├── mpv/              # video settings
+│   ├── noctalia/         # theme
+│   ├── qt5ct/            # Qt5: colors
+│   ├── qt6ct/            # Qt6: settings and colors
+│   ├── swash/            # wallpaper daemon
+│   ├── wlogout/          # logout menu
+│   ├── waybar/           # bar, styles and mini player
+│   ├── zshrc.d/          # zsh additions
+│   ├── mimeapps.list     # default applications
 │   └── starship.toml     # prompt
 ├── home/
 │   ├── .bash_logout
@@ -42,7 +42,7 @@ dotfiles/
 └── README.md
 ```
 
-## Установка
+## Installation
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
@@ -50,17 +50,17 @@ cd ~/dotfiles
 ./install.sh
 ```
 
-Скрипт заменит файлы в `~/.config` и домашние dotfiles **симлинками** на этот репозиторий. Существующие файлы будут перемещены в:
+The script replaces files in `~/.config` and home-directory dotfiles with **symlinks** to this repository. Existing files are moved to:
 
 ```
-~/.local/state/dotfiles-backup/<дата-время>/
+~/.local/state/dotfiles-backup/<date-time>/
 ```
 
-Перед запуском лучше просмотреть `install.sh`. Для установки без подтверждения: `./install.sh --yes`.
+Review `install.sh` before running it. To skip the confirmation prompt: `./install.sh --yes`.
 
-### Зависимости
+### Dependencies
 
-Пакеты указаны для Arch/CachyOS — на других дистрибутивах названия могут отличаться.
+Package names are for Arch/CachyOS; adjust them for your distribution.
 
 ```text
 hyprland waybar kitty foot alacritty fish zsh starship
@@ -70,54 +70,54 @@ python-gobject gtk3 gtk-layer-shell python-cairo
 ttf-jetbrains-mono-nerd
 ```
 
-Также нужен Nerd Font (в конфигах используется `JetBrainsMono Nerd Font`) и Qt-тема Kvantum.
+You also need a Nerd Font (the configs use `JetBrainsMono Nerd Font`) and the Kvantum Qt theme engine.
 
-## Waybar и мини-плеер
+## Waybar and the mini player
 
-Клик по названию трека в Waybar открывает окно `music_popup.py`:
+Clicking the track title in Waybar opens the `music_popup.py` window:
 
-- обложка, трек, исполнитель, альбом и прогресс;
-- кнопки «предыдущий / play-pause / следующий»;
-- перемотка кликом по прогрессу;
-- горячие клавиши: `Space`, `←`/`→` (±5 секунд), `Esc` — закрыть;
-- фон — размытая обложка текущего трека, меняется вместе с песней;
-- окно открывается на фиксированной позиции под треком.
+- cover art, track, artist, album and progress;
+- previous / play-pause / next buttons;
+- click on the progress bar to seek;
+- keyboard shortcuts: `Space`, `←`/`→` (±5 seconds), `Esc` to close;
+- background: a blurred version of the current cover, updated on every track change;
+- the window always opens at a fixed position below the track title.
 
-Позиция задаётся двумя местами:
+The position is controlled by two values:
 
-- `POPUP_LEFT = 360` в `config/waybar/music_popup.py`;
-- `#mpris { margin-left: 12px; }` в `config/waybar/style.css`.
+- `POPUP_LEFT = 360` in `config/waybar/music_popup.py`;
+- `#mpris { margin-left: 12px; }` in `config/waybar/style.css`.
 
-Если меняете набор модулей слева, поправьте `POPUP_LEFT`, чтобы окно оставалось под названием трека.
+If you change the modules on the left side of the bar, adjust `POPUP_LEFT` so the window stays under the track title.
 
-Мини-плееру нужны: `playerctl`, `python-gobject`, GTK3, `gtk-layer-shell`, `pycairo`. Обложки кэшируются в `~/.cache/waybar-music-popup`.
+The mini player requires `playerctl`, `python-gobject`, GTK3, `gtk-layer-shell` and `pycairo`. Cover art is cached in `~/.cache/waybar-music-popup`.
 
-Меню питания (`⏻`) использует `config/waybar/power_menu.xml` и команды из `menu-actions`.
+The power menu (`⏻`) uses `config/waybar/power_menu.xml` and the commands from `menu-actions`.
 
-## Горячие клавиши Hyprland
+## Hyprland keybindings
 
-| Клавиши | Действие |
+| Keys | Action |
 | --- | --- |
 | `Super + T` | kitty |
-| `Super + Q` | закрыть окно |
-| `Super + M` | выключение / меню питания |
+| `Super + Q` | close window |
+| `Super + M` | shutdown / power menu |
 | `Super + E` | Dolphin |
-| `Super + V` | плавающий режим |
+| `Super + V` | toggle floating |
 | `Super + R` | hyprlauncher |
 | `Super + P` | pseudo-tile |
-| `Super + J` | переключить split |
+| `Super + J` | toggle split |
 | `Super + W` | Firefox |
 | `Super + C` | VS Code OSS |
 | `Super + D` | fuzzel |
 | `Super + S` | scratchpad |
-| `Super + 1..0` | перейти на workspace |
-| `Super + Shift + 1..0` | переместить окно на workspace |
+| `Super + 1..0` | switch workspace |
+| `Super + Shift + 1..0` | move window to workspace |
 
-Мультимедиа-клавиши управляют громкостью, яркостью и плеером через `wpctl`, `brightnessctl` и `playerctl`.
+Media keys control volume, brightness and playback through `wpctl`, `brightnessctl` and `playerctl`.
 
-## Заметки
+## Notes
 
-- Конфиг Hyprland написан на **Lua** и рассчитан на Hyprland 0.56+.
-- В `hyprland.lua` указана раскладка `us,ru` и мышь `epic-mouse-v1` — замените под себя.
-- Часть цветов генерируется `matugen`/`noctalia`; пути к сгенерированным файлам могут быть машинозависимыми.
-- Тяжёлые данные приложений (браузеры, `quickshell`, `opencode`, `nvm`, кэши) в репозиторий не включены.
+- The Hyprland config is written in **Lua** and targets Hyprland 0.56+.
+- `hyprland.lua` uses the `us,ru` keyboard layout and an `epic-mouse-v1` device — change these for your own hardware.
+- Some colors are generated by `matugen`/`noctalia`; paths to generated files may be machine-specific.
+- Heavy application data (browsers, `quickshell`, `opencode`, `nvm`, caches) is intentionally not included.
