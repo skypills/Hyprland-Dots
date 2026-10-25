@@ -24,6 +24,7 @@
     "group/hardware": {
         "orientation": "horizontal",
         "modules": [
+            "custom/system",
             "network",
             "pulseaudio",
             "battery"
@@ -96,7 +97,16 @@
             "car": "",
             "default": ["", "", ""]
         },
-        "on-click": "pavucontrol"
+        "on-click": "python3 $HOME/.config/waybar/volume_popup.py",
+        "on-click-right": "pavucontrol",
+        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    },
+
+    "custom/system": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "python3 $HOME/.config/waybar/system_popup.py"
     },
     
     "custom/power": {

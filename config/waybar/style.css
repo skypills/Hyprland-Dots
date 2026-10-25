@@ -75,6 +75,7 @@ button:hover {
 #mpd,
 #language,
 #keyboard-state,
+#custom-system,
 #custom-power {
     padding: 0 10px;
     color: #cdd6f4;
@@ -112,6 +113,9 @@ button:hover {
 }
 #pulseaudio.muted {
     color: #6c7086;
+}
+#custom-system {
+    color: #cba6f7;
 }
 #battery {
     color: #a6e3a1;

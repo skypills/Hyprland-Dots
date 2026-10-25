@@ -4,6 +4,7 @@ import math
 import os
 import subprocess
 import threading
+import time
 import urllib.request
 
 import cairo
@@ -16,7 +17,10 @@ gi.require_version("GtkLayerShell", "0.1")
 
 from gi.repository import Gdk, GdkPixbuf, GLib, Gtk, GtkLayerShell
 
+from popup_utils import layer_rect, pointer_inside
+
 APP_ID = "org.skypills.MusicPopup"
+NAMESPACE = "music-popup"
 CACHE_DIR = os.path.expanduser("~/.cache/waybar-music-popup")
 SEP = "\x1f"
 ART_SIZE = 112
@@ -80,39 +84,35 @@ button.play {
 button.play:hover {
     background: #a6c8ff;
 }
-button.close {
-    background: transparent;
-    color: #6c7086;
-    border-radius: 16px;
-    min-width: 32px;
-    min-height: 32px;
-    padding: 0;
-    font-size: 20px;
-    box-shadow: none;
-}
-button.close:hover {
-    background: rgba(243, 139, 168, 0.2);
-    color: #f38ba8;
-}
-scale {
+scale, scale:focus, scale:hover, scale:active {
     min-height: 14px;
     padding: 0;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    background-color: transparent;
 }
-scale trough {
+scale trough, scale:hover trough, scale:focus trough {
     min-height: 5px;
     border-radius: 3px;
     background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    box-shadow: none;
 }
 scale highlight {
     border-radius: 3px;
     background-color: #89b4fa;
+    border: none;
+    box-shadow: none;
 }
-scale slider {
+scale slider, scale:hover slider, scale:focus slider {
     min-width: 11px;
     min-height: 11px;
     border-radius: 6px;
     background-color: #cdd6f4;
     margin: -3px 0;
+    border: none;
+    box-shadow: none;
 }
 """
 
@@ -200,7 +200,11 @@ class MusicPopup(Gtk.Application):
         self._art_token = 0
         self._dragging = False
         self._updating = False
+        self._leave_source = None
         self._quit_source = None
+        self._check_source = None
+        self._entered = False
+        self._shown_at = 0.0
         self._length = 0
         self._position = 0
         self._status = "Stopped"
@@ -229,7 +233,7 @@ class MusicPopup(Gtk.Application):
         self.window.set_size_request(POPUP_WIDTH, -1)
 
         GtkLayerShell.init_for_window(self.window)
-        GtkLayerShell.set_namespace(self.window, "music-popup")
+        GtkLayerShell.set_namespace(self.window, NAMESPACE)
         GtkLayerShell.set_layer(self.window, GtkLayerShell.Layer.OVERLAY)
         GtkLayerShell.set_keyboard_mode(
             self.window, GtkLayerShell.KeyboardMode.ON_DEMAND
@@ -253,17 +257,6 @@ class MusicPopup(Gtk.Application):
         self.now_label.set_margin_start(5)
         self.now_label.set_margin_top(3)
         header.pack_start(self.now_label, False, False, 0)
-
-        header.pack_start(Gtk.Box(), True, True, 0)
-
-        close_button = Gtk.Button(label="✕")
-        close_button.get_style_context().add_class("close")
-        close_button.set_relief(Gtk.ReliefStyle.NONE)
-        close_button.set_valign(Gtk.Align.START)
-        close_button.set_margin_top(3)
-        close_button.set_margin_end(3)
-        close_button.connect("clicked", lambda *_: self._hide())
-        header.pack_end(close_button, False, False, 0)
         root.pack_start(header, False, False, 0)
 
         body = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
@@ -336,6 +329,8 @@ class MusicPopup(Gtk.Application):
 
         self.window.connect("delete-event", self._on_delete)
         self.window.connect("key-press-event", self._on_key_press)
+        self.window.connect("leave-notify-event", self._on_leave)
+        self.window.connect("enter-notify-event", self._on_enter)
 
         provider = Gtk.CssProvider()
         provider.load_from_data(CSS.encode())
@@ -383,11 +378,22 @@ class MusicPopup(Gtk.Application):
         if self._quit_source is not None:
             GLib.source_remove(self._quit_source)
             self._quit_source = None
+        if self._check_source is not None:
+            GLib.source_remove(self._check_source)
         self.window.show_all()
         self.window.present()
+        self._entered = False
+        self._shown_at = time.monotonic()
+        self._check_source = GLib.timeout_add(400, self._check_pointer)
         self._poll()
 
     def _hide(self):
+        if self._leave_source is not None:
+            GLib.source_remove(self._leave_source)
+            self._leave_source = None
+        if self._check_source is not None:
+            GLib.source_remove(self._check_source)
+            self._check_source = None
         self.window.hide()
         if self._quit_source is not None:
             GLib.source_remove(self._quit_source)
@@ -401,6 +407,43 @@ class MusicPopup(Gtk.Application):
 
     def _on_delete(self, *_):
         self._hide()
+        return True
+
+    def _on_enter(self, *_):
+        self._entered = True
+        if self._leave_source is not None:
+            GLib.source_remove(self._leave_source)
+            self._leave_source = None
+        return False
+
+    def _on_leave(self, _window, event):
+        if event.detail == Gdk.NotifyType.INFERIOR:
+            return False
+        if self._leave_source is not None:
+            GLib.source_remove(self._leave_source)
+        self._leave_source = GLib.timeout_add(140, self._hide_after_leave)
+        return False
+
+    def _hide_after_leave(self):
+        self._leave_source = None
+        self._hide()
+        return False
+
+    def _check_pointer(self):
+        if self.window is None or not self.window.get_visible():
+            self._check_source = None
+            return False
+        inside = pointer_inside(layer_rect(NAMESPACE))
+        if inside:
+            self._entered = True
+        elif self._entered:
+            self._check_source = None
+            self._hide()
+            return False
+        elif time.monotonic() - self._shown_at >= 10:
+            self._check_source = None
+            self._hide()
+            return False
         return True
 
     def _on_key_press(self, _window, event):

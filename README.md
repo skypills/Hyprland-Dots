@@ -28,7 +28,7 @@ dotfiles/
 │   ├── qt6ct/            # Qt6: settings and colors
 │   ├── swash/            # wallpaper daemon
 │   ├── wlogout/          # logout menu
-│   ├── waybar/           # bar, styles and mini player
+│   ├── waybar/           # bar, styles, mini player and popups
 │   ├── zshrc.d/          # zsh additions
 │   ├── mimeapps.list     # default applications
 │   └── starship.toml     # prompt
@@ -45,7 +45,7 @@ dotfiles/
 ## Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
+git clone https://github.com/skypills/Hyprland-Dots.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh
 ```
@@ -65,14 +65,17 @@ Package names are for Arch/CachyOS; adjust them for your distribution.
 ```text
 hyprland waybar kitty foot alacritty fish zsh starship
 btop cava fuzzel wlogout matugen micro mpv fastfetch swash
-playerctl pavucontrol
-python-gobject gtk3 gtk-layer-shell python-cairo
+playerctl pavucontrol wireplumber
+python-gobject gtk3 gtk-layer-shell python-cairo python-psutil
+pciutils
 ttf-jetbrains-mono-nerd
 ```
 
 You also need a Nerd Font (the configs use `JetBrainsMono Nerd Font`) and the Kvantum Qt theme engine.
 
-## Waybar and the mini player
+## Waybar and popups
+
+### Music
 
 Clicking the track title in Waybar opens the `music_popup.py` window:
 
@@ -80,6 +83,7 @@ Clicking the track title in Waybar opens the `music_popup.py` window:
 - previous / play-pause / next buttons;
 - click on the progress bar to seek;
 - keyboard shortcuts: `Space`, `←`/`→` (±5 seconds), `Esc` to close;
+- closes automatically when the pointer leaves the window;
 - background: a blurred version of the current cover, updated on every track change;
 - the window always opens at a fixed position below the track title.
 
@@ -91,6 +95,14 @@ The position is controlled by two values:
 If you change the modules on the left side of the bar, adjust `POPUP_LEFT` so the window stays under the track title.
 
 The mini player requires `playerctl`, `python-gobject`, GTK3, `gtk-layer-shell` and `pycairo`. Cover art is cached in `~/.cache/waybar-music-popup`.
+
+### Volume
+
+Clicking the volume icon opens `volume_popup.py`: a slider, the current sink name, a mute button and the volume percentage. Right-click opens `pavucontrol`; scrolling over the icon changes the volume by 5%. The popup closes when the pointer leaves it. It uses `wpctl` (PipeWire/WirePlumber).
+
+### System
+
+The purple chip icon in the hardware group opens `system_popup.py`. It shows the CPU model, cores, usage and temperature, GPU, memory, swap, root disk usage, load average, uptime, OS and kernel. Values update once per second and the popup closes when the pointer leaves it. Requires `python-psutil`; the GPU name is read with `lspci` (package `pciutils`).
 
 The power menu (`⏻`) uses `config/waybar/power_menu.xml` and the commands from `menu-actions`.
 
