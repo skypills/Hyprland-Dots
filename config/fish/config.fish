@@ -33,4 +33,4 @@ if status is-interactive
     end
 end
 
-fish_add_path /home/skypills/.spicetify
+fish_add_path $HOME/.spicetify
