@@ -150,9 +150,10 @@ hl.curve("easy",           { type = "spring", mass = 1, stiffness = 238.1191, da
 
 hl.animation({ leaf = "global",        enabled = true,  speed = 10,   bezier = "default" })
 hl.animation({ leaf = "border",        enabled = true,  speed = 5.39, bezier = "easeOutQuint" })
-hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "easy" })
-hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.1,  spring = "easy",         style = "popin 87%" })
-hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 1.49, bezier = "linear",       style = "popin 87%" })
+hl.animation({ leaf = "windows",       enabled = true,  speed = 6.0,  spring = "easy" })
+hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.8,  bezier = "easeOutQuint", style = "popin 85%" })
+hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 3.2,  bezier = "quick",        style = "popin 92%" })
+hl.animation({ leaf = "windowsMove",   enabled = true,  speed = 5.2,  spring = "easy" })
 hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 1.46, bezier = "almostLinear" })
 hl.animation({ leaf = "fade",          enabled = true,  speed = 3.03, bezier = "quick" })
@@ -263,7 +264,7 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
@@ -272,6 +273,11 @@ hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("firefox"))
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("code-oss"))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("fuzzel"))
+
+-- Screenshots: save to ~/Pictures/Screenshots and copy to clipboard
+hl.bind("Print", hl.dsp.exec_cmd('mkdir -p "$HOME/Pictures/Screenshots" && hyprshot -s -m region -o "$HOME/Pictures/Screenshots"'))
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd('mkdir -p "$HOME/Pictures/Screenshots" && hyprshot -s -m output -m active -o "$HOME/Pictures/Screenshots"'))
+hl.bind("CTRL + Print", hl.dsp.exec_cmd('mkdir -p "$HOME/Pictures/Screenshots" && hyprshot -s -m window -m active -o "$HOME/Pictures/Screenshots"'))
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

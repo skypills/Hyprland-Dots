@@ -76,6 +76,7 @@ button:hover {
 #language,
 #keyboard-state,
 #custom-system,
+#custom-calendar,
 #custom-power {
     padding: 0 10px;
     color: #cdd6f4;
@@ -116,6 +117,9 @@ button:hover {
 }
 #custom-system {
     color: #cba6f7;
+}
+#custom-calendar {
+    color: #94e2d5;
 }
 #battery {
     color: #a6e3a1;

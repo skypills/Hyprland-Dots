@@ -65,6 +65,7 @@ Package names are for Arch/CachyOS; adjust them for your distribution.
 hyprland waybar kitty foot alacritty fish zsh starship
 btop cava fuzzel wlogout matugen micro mpv fastfetch swash
 playerctl pavucontrol wireplumber brightnessctl
+networkmanager grim slurp wl-clipboard jq hyprshot
 python-gobject gtk3 gtk-layer-shell python-cairo python-psutil
 pciutils
 ttf-jetbrains-mono-nerd
@@ -105,6 +106,14 @@ Clicking the volume icon opens `volume_popup.py`: a slider, the current sink nam
 
 The purple chip icon in the hardware group opens `system_popup.py`. It shows the CPU model, cores, usage and temperature, GPU, memory, swap, root disk usage, load average, uptime, OS and kernel. Values update once per second and the popup closes when the pointer leaves it. Requires `python-psutil`; the GPU name is read with `lspci` (package `pciutils`).
 
+### Wi-Fi
+
+Clicking the network module opens `wifi_popup.py`: a list of visible networks with signal strength, security and the active connection. Selecting a secured network prompts for a password; the refresh button rescans. Requires NetworkManager (`nmcli`). The popup closes when the pointer leaves it, but the password form stays open while typing.
+
+### Calendar
+
+The calendar icon before the clock opens `calendar_popup.py`: a month view with navigation and a `Today` button. It uses the system locale for date names.
+
 The power menu (`⏻`) uses `config/waybar/power_menu.xml` and the commands from `menu-actions`.
 
 ## Hyprland keybindings
@@ -129,6 +138,11 @@ The power menu (`⏻`) uses `config/waybar/power_menu.xml` and the commands from
 | `Super + Shift + 1..0` | move window to workspace |
 | `Super + scroll` | previous / next workspace |
 | `Super + LMB / RMB` | move / resize window |
+| `Print` | screenshot a region |
+| `Shift + Print` | screenshot the active monitor |
+| `Ctrl + Print` | screenshot the active window |
+
+Screenshots are saved to `~/Pictures/Screenshots` and copied to the clipboard via `hyprshot`.
 
 Media keys control volume, brightness and playback through `wpctl`, `brightnessctl` and `playerctl`.
 

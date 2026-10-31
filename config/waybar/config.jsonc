@@ -15,6 +15,7 @@
     ],
     "modules-right": [
         "group/hardware", // Calling the group!
+        "custom/calendar",
         "clock",
         "tray",
         "custom/power"
@@ -80,7 +81,10 @@
         "tooltip-format": "{ifname} via {gwaddr} ",
         "format-linked": "{ifname} (No IP) ",
         "format-disconnected": "Disconnected ⚠",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+        "format-alt": "{ifname}: {ipaddr}/{cidr}",
+        "tooltip-format-wifi": "{essid}\nSignal: {signalStrength}%\nClick to connect",
+        "tooltip-format-disconnected": "Click to connect",
+        "on-click": "python3 $HOME/.config/waybar/wifi_popup.py"
     },
     
     "pulseaudio": {
@@ -107,6 +111,12 @@
         "format": "",
         "tooltip": false,
         "on-click": "python3 $HOME/.config/waybar/system_popup.py"
+    },
+
+    "custom/calendar": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "python3 $HOME/.config/waybar/calendar_popup.py"
     },
     
     "custom/power": {
